@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+*.env
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# PyInstaller build artifacts
+dist/
+build/
+*.spec
+
+# Downloads
+downloads/
