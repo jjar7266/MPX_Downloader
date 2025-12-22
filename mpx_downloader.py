@@ -31,6 +31,7 @@ import subprocess               #  Run yt-dlp.exe
 import os                       #  Folder creation and file paths
 import threading                #  Run downloads in a background thread so GUI stays responsive 
 import requests
+from tkinter import filedialog
 
 
 # ---------------------------------------------------------
@@ -74,7 +75,9 @@ def download_mp3(url, status_label, root):
     - All GUI updates routed through thread_safe_status().
     """
 
-    # Long-running task → don't auto-reset the status quickly
+    # Mark download as in progress
+
+    root.is_downloading = True
 
     thread_safe_status(root, status_label, "Downloading MP3...", delay=999999)
 
@@ -88,7 +91,7 @@ def download_mp3(url, status_label, root):
         yt_dlp_path,
         "--no-playlist",
         "-x", "--audio-format", "mp3",
-        "-o", "downloads/mp3/%(title)s.%(ext)s",
+        "-o", "downloads/mp3/%(title)s_%(autonumber)s.%(ext)s",
         url
     ]
 
@@ -113,8 +116,10 @@ def download_mp3(url, status_label, root):
         thread_safe_status(root, status_label, "Unexpected error")
         root.after(0, lambda: messagebox.showerror("Error", str(e)))  # noqa
 
+    finally:
+        # Always clear the flag, even on error
 
-
+        root.is_downloading = False
 
 def download_mp4(url, status_label, root):
     """   
@@ -125,7 +130,9 @@ def download_mp4(url, status_label, root):
     - Uses thread-safe UI updates.
     """
 
-    # Long-running task -> keep status locked until done
+    # Mark download as in progress
+
+    root.is_downloading = True
 
     thread_safe_status(root, status_label, "Downloading MP4...", delay=999999)
 
@@ -139,7 +146,7 @@ def download_mp4(url, status_label, root):
         yt_dlp_path,
         "--no-playlist",
         "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
-        "-o", "downloads/mp4/%(title)s.%(ext)s",
+        "-o", "downloads/mp4/%(title)s_%(autonumber)s.%(ext)s",
         url
     ]
     try:
@@ -163,6 +170,10 @@ def download_mp4(url, status_label, root):
         thread_safe_status(root, status_label, "Unexpected error")
         root.after(0, lambda: messagebox.showerror("Error", str(e)))  # noqa
 
+    finally:
+        # Always clear the flag
+
+        root.is_downloading = False
 
 def update_ytdlp(status_label, root):
     """
@@ -251,6 +262,39 @@ def main():
     root.geometry("450x250")
     root.resizable(False, False)
 
+    # Flag: download-in-progress (attached to the root window)
+
+    root.is_downloading = False
+
+    # Create the save-path variable FIRST
+
+    save_path_var = tk.StringVar()
+    save_path_var.set(os.path.join(os.path.expanduser("~"), "Downloads"))
+
+    # Define your browse function
+
+    def choose_save_folder():
+        folder = filedialog.askdirectory()
+        if folder:
+            save_path_var.set(folder)
+
+    # Create your dropdown
+
+    save_frame = tk.Frame(root)
+    save_frame.pack(pady=5, fill="x")
+
+    tk.Label(save_frame, text="Save To:").pack(side="left", padx=5)
+
+    # Display the current folder path
+
+    save_display = tk.Label(save_frame, textvariable=save_path_var, anchor="w")
+    save_display.pack(side="left", padx=5)
+
+    # Browse button
+
+    browse_button = tk.Button(save_frame, text="Browse...", command=choose_save_folder)
+    browse_button.pack(side="left", padx=5)
+
     # Title label
     title_label = tk.Label(root, text="MPX Downloader", font=("Arial", 16, "bold"))
     title_label.pack(pady=10)
@@ -304,9 +348,19 @@ def main():
         ).start()
     ).pack(side="left", padx=10)
 
+    # close-window handler
+
+    def on_close():
+        if getattr(root, "is_downloading", False):
+            if messagebox.askyesno("Exit?", "A download is still in progress. Exit anyway?"):
+                root.destroy()
+        else:
+            root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", on_close)
+
     # Start Tkinter event loop
     root.mainloop()
-
 
 # ---------------------------------------------------------
 # Entry point
