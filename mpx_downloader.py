@@ -68,7 +68,7 @@ def thread_safe_status(root, status_label, text, delay=3000, reset_to="Ready"):
 # ---------------------------------------------------------
 # MP3 Download Logic (runs inside a background thread)
 # ---------------------------------------------------------
-def download_mp3(url, status_label, root):
+def download_mp3(url, save_path, status_label, root):
     """
     Download a YouTube URL as MP3 using yt-dlp.exe.
     - Runs in a background thread.
@@ -91,7 +91,7 @@ def download_mp3(url, status_label, root):
         yt_dlp_path,
         "--no-playlist",
         "-x", "--audio-format", "mp3",
-        "-o", "downloads/mp3/%(title)s_%(autonumber)s.%(ext)s",
+        "-o", os.path.join(save_path, "%(title)s_%(autonumber)s.%(ext)s"),
         url
     ]
 
@@ -121,7 +121,7 @@ def download_mp3(url, status_label, root):
 
         root.is_downloading = False
 
-def download_mp4(url, status_label, root):
+def download_mp4(url, save_path, status_label, root):
     """   
     Download a YouTube URL as a high-quality MP4 using yt-dlp.exe.
     - Uses best available video + best available audio.
@@ -146,7 +146,7 @@ def download_mp4(url, status_label, root):
         yt_dlp_path,
         "--no-playlist",
         "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
-        "-o", "downloads/mp4/%(title)s_%(autonumber)s.%(ext)s",
+        "-o", os.path.join(save_path, "%(title)s_%(autonumber)s.%(ext)s"),
         url
     ]
     try:
@@ -214,7 +214,7 @@ def update_ytdlp(status_label, root):
 # ---------------------------------------------------------
 # Handle Download Button Click
 # ---------------------------------------------------------
-def handle_download(mode_var, url_entry, status_label, root):
+def handle_download(mode_var, url_entry, status_label, root, save_path):
     """
     Validate URL, clear input, and dispatch to MP3/MP4 download.
     MP3 downloads run in a background thread to keep GUI responsive.
@@ -237,14 +237,14 @@ def handle_download(mode_var, url_entry, status_label, root):
     if mode == "mp3":
         threading.Thread(
             target=download_mp3,
-            args=(url, status_label, root),
+            args=(url, save_path, status_label, root),
             daemon=True  # Thread won't block app exit
         ).start()
     # MP4 mode
     else:
         threading.Thread(
             target=download_mp4,
-            args=(url, status_label, root),
+            args=(url, save_path, status_label, root),
             daemon=True
         ).start()
 
@@ -333,7 +333,7 @@ def main():
         buttons_frame,
         text="Download",
         width=12,
-        command=lambda: handle_download(mode_var, url_entry, status_label, root)
+        command=lambda: handle_download(mode_var, url_entry, status_label, root, save_path_var.get())
     ).pack(side="left", padx=10)
 
     # Update yt-dlp button
