@@ -30,6 +30,8 @@ from tkinter import messagebox  #  Popup dialogs
 import subprocess               #  Run yt-dlp.exe
 import os                       #  Folder creation and file paths
 import threading                #  Run downloads in a background thread so GUI stays responsive 
+import requests
+
 
 # ---------------------------------------------------------
 # Ensure download folders exist before the GUI loads
@@ -106,10 +108,12 @@ def download_mp3(url, status_label, root):
             # Show error dialog safely on main thread
             root.after(0, lambda: messagebox.showerror("Download Error", result.stderr))
 
-    except Exception as e:
+    except Exception as e: # noqa
         # Python-side error (not yt-dlp)
         thread_safe_status(root, status_label, "Unexpected error")
-        root.after(0, lambda: messagebox.showerror("Error", str(e)))
+        root.after(0, lambda: messagebox.showerror("Error", str(e)))  # noqa
+
+
 
 
 def download_mp4(url, status_label, root):
@@ -154,11 +158,48 @@ def download_mp4(url, status_label, root):
             thread_safe_status(root, status_label, "Error during MP4 download")
             root.after(0, lambda: messagebox.showerror("Download Error", result.stderr))
 
-    except Exception as e:
+    except Exception as e:  # noqa
         # Python-side error
         thread_safe_status(root, status_label, "Unexpected error")
-        root.after(0, lambda: messagebox.showerror("Error", str(e)))
+        root.after(0, lambda: messagebox.showerror("Error", str(e)))  # noqa
 
+
+def update_ytdlp(status_label, root):
+    """
+    Update yt-dlp by:
+    1. Updating the pip package (optional but useful for dev tools)
+    2. Downloading the latest yt-dlp.exe and replacing the local copy
+    """
+    
+    thread_safe_status(root, status_label, "Updating yt-dlp...", delay=999999)
+
+    # --- Step 1: Update pip package (optional but harmless)
+    try:
+        subprocess.run(
+            ["python", "-m", "pip", "install", "--upgrade", "yt-dlp"],
+            check=True
+        )
+    except Exception:
+        pass  # pip update isn't required for the EXE
+
+    # --- Step 2: Download latest yt-dlp.exe
+    download_url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+    exe_path = os.path.join(os.getcwd(), "yt-dlp.exe")
+
+    try:
+        thread_safe_status(root, status_label, "Downloading latest yt-dlp.exe...", delay=999999)
+
+        response = requests.get(download_url, timeout=30)
+        response.raise_for_status()
+
+        with open(exe_path, "wb") as f:
+            f.write(response.content)
+
+        thread_safe_status(root, status_label, "yt-dlp updated successfully!")
+
+    except Exception as e:  # noqa
+        thread_safe_status(root, status_label, "Update failed")
+        root.after(0, lambda: messagebox.showerror("Update Error", str(e)))  # noqa
 # ---------------------------------------------------------
 # Handle Download Button Click
 # ---------------------------------------------------------
@@ -195,18 +236,6 @@ def handle_download(mode_var, url_entry, status_label, root):
             args=(url, status_label, root),
             daemon=True
         ).start()
-
-
-# ---------------------------------------------------------
-# Handle yt-dlp Update Button
-# ---------------------------------------------------------
-def handle_update_yt_dlp(status_label, root):
-    """
-    Stub for updating yt-dlp.exe.
-    Currently just shows a message and updates status.
-    """
-    root.after(0, lambda: messagebox.showinfo("Update yt-dlp", "yt-dlp update functionality is not implemented yet."))
-    thread_safe_status(root, status_label, "yt-dlp update requested (stub)")
 
 
 # ---------------------------------------------------------
@@ -268,7 +297,11 @@ def main():
         buttons_frame,
         text="Update yt-dlp",
         width=12,
-        command=lambda: handle_update_yt_dlp(status_label, root)
+        command=lambda: threading.Thread(
+            target=update_ytdlp,
+            args=(status_label, root),
+            daemon=True
+        ).start()
     ).pack(side="left", padx=10)
 
     # Start Tkinter event loop
