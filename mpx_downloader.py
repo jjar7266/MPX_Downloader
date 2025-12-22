@@ -73,14 +73,18 @@ def download_mp3(url, status_label, root):
     """
 
     # Long-running task → don't auto-reset the status quickly
+
     thread_safe_status(root, status_label, "Downloading MP3...", delay=999999)
 
     # Build absolute path to yt-dlp.exe (guaranteed to work regardless of cwd)
+
     yt_dlp_path = os.path.join(os.path.dirname(__file__), "yt-dlp.exe")
 
     # yt-dlp command for MP3 extraction
+
     command = [
         yt_dlp_path,
+        "--no-playlist",
         "-x", "--audio-format", "mp3",
         "-o", "downloads/mp3/%(title)s.%(ext)s",
         url
@@ -107,6 +111,53 @@ def download_mp3(url, status_label, root):
         thread_safe_status(root, status_label, "Unexpected error")
         root.after(0, lambda: messagebox.showerror("Error", str(e)))
 
+
+def download_mp4(url, status_label, root):
+    """   
+    Download a YouTube URL as a high-quality MP4 using yt-dlp.exe.
+    - Uses best available video + best available audio.
+    - Saves output into downloads/mp4/.
+    - Runs in a background thread.
+    - Uses thread-safe UI updates.
+    """
+
+    # Long-running task -> keep status locked until done
+
+    thread_safe_status(root, status_label, "Downloading MP4...", delay=999999)
+
+    # Build absolute path to yt-dlp.exe
+
+    yt_dlp_path = os.path.join(os.path.dirname(__file__), "yt-dlp.exe")
+
+    # Best available MP4 video + best available M4A audio
+
+    command = [
+        yt_dlp_path,
+        "--no-playlist",
+        "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
+        "-o", "downloads/mp4/%(title)s.%(ext)s",
+        url
+    ]
+    try:
+        # Run yt-dlp and capture output
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True
+        )
+
+        if result.returncode == 0:
+            # Success 
+            thread_safe_status(root, status_label, "MP4 download complete!")
+        else:
+            # yt-dlp error
+            thread_safe_status(root, status_label, "Error during MP4 download")
+            root.after(0, lambda: messagebox.showerror("Download Error", result.stderr))
+
+    except Exception as e:
+        # Python-side error
+        thread_safe_status(root, status_label, "Unexpected error")
+        root.after(0, lambda: messagebox.showerror("Error", str(e)))
 
 # ---------------------------------------------------------
 # Handle Download Button Click
@@ -137,10 +188,13 @@ def handle_download(mode_var, url_entry, status_label, root):
             args=(url, status_label, root),
             daemon=True  # Thread won't block app exit
         ).start()
-
-    # MP4 mode (not implemented yet)
+    # MP4 mode
     else:
-        thread_safe_status(root, status_label, "Download requested: MP4 (not implemented yet)")
+        threading.Thread(
+            target=download_mp4,
+            args=(url, status_label, root),
+            daemon=True
+        ).start()
 
 
 # ---------------------------------------------------------
