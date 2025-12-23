@@ -1,26 +1,159 @@
-# MPX Downloader 🎵📹  
-A simple, user-friendly desktop app for downloading YouTube content as MP3 or MP4 — built with Python and Tkinter.
+[![Sponsor](https://img.shields.io/badge/Sponsor-❤️-red)](https://github.com/sponsors/jjar7266)
+
+<a href="https://buymeacoffee.com/jjar7266" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174">
+</a>
+
+<!-- Banner -->
+<h1 align="center">🎵📥 MPX Downloader 📥🎵</h1>
+<p align="center">
+  <i>A clean, modern YouTube MP3/MP4 downloader powered by yt‑dlp & FFmpeg</i><br>
+  <b>Simple • Reliable • Polished</b>
+</p>
+
+---
+
+<p align="center">
+  <a href="./LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
+  </a>
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python" alt="Python">
+  </a>
+</p>
+
+# 🎶 MPX Downloader
+
+**A lightweight, user‑friendly desktop app for downloading YouTube videos as MP3 or MP4.**  
+No Python required — just download, extract, and run.
+
+Built with the same polished style as your previous Sound & Music Converter project, but redesigned for video/audio downloading with a clean GUI.
+
+---
+
+## 🚀 Overview
+
+**MPX Downloader** wraps yt‑dlp and FFmpeg in a simple, intuitive interface:
+
+- Paste a YouTube link  
+- Choose MP3 or MP4  
+- Pick a save folder  
+- Download instantly  
+
+Everything is bundled — no installs, no setup, no command line.
+
+---
 
 ## ✨ Features
-- ✅ MP3 or MP4 mode selection
-- ✅ Save-to folder picker
-- ✅ Autonumbered filenames (no overwrites)
-- ✅ Thread-safe status updates
-- ✅ Close protection during downloads
-- ✅ Built-in yt-dlp updater
-- ✅ Clean folder structure for saved files
+
+- 🎵 **MP3 & MP4 download modes**
+- 📁 **Save‑to folder picker**
+- 🔄 **Auto‑numbered filenames** (no overwrites)
+- ⚙️ **Built‑in yt‑dlp updater**
+- 🧩 **Self‑contained EXE** (FFmpeg + yt‑dlp included)
+- 🧠 **Thread‑safe UI updates**
+- 🚫 **Close protection during downloads**
+- 🪟 **Clean, modern Tkinter interface**
+
+---
+
+## 📦 Download (Windows)
+
+Download the latest release ZIP from the **Releases** section.
+
+Inside the ZIP:
+
+- `MPX_Downloader.exe`
+- `yt-dlp.exe`
+- `ffmpeg.exe`
+- `ffprobe.exe`
+- `README.txt`
+
+Extract the ZIP → run **MPX_Downloader.exe**.
+
+No installation required.
+
+---
 
 ## 🖥️ How It Works
-MPX Downloader wraps the powerful [yt-dlp](https://github.com/yt-dlp/yt-dlp) tool in a clean GUI.  
-Users paste a YouTube URL, choose a format, and download directly to their chosen folder — with no command line required.
 
-## 📦 Requirements
+MPX Downloader uses:
+
+- **yt‑dlp.exe** → downloads video/audio  
+- **ffmpeg.exe** → converts to MP3/MP4  
+- **ffprobe.exe** → reads metadata  
+
+The GUI handles everything automatically.
+
+---
+
+## 🧪 Requirements (for developers)
+
+If you want to run from source:
+
 - Python 3.10+
-- `yt-dlp.exe` (bundled with the project)
-- Windows OS (tested on Windows 11)
+- `yt-dlp` Python package
+- FFmpeg installed or available in PATH
+- Windows 10 or 11
 
-## 🚀 Running the App
-Clone the repo and run:
+---
+
+## ⚙️ Setup (for developers)
 
 ```bash
+python -m venv venv
+venv\Scripts\activate  # Windows
+pip install -r requirements.txt
 python main.py
+```
+
+---
+
+## 📁 Packaged Build Contents
+
+| File | Purpose |
+|------|---------|
+| **MPX_Downloader.exe** | Main application |
+| **yt-dlp.exe** | Downloads video/audio |
+| **ffmpeg.exe** | Converts media formats |
+| **ffprobe.exe** | Reads metadata |
+| **README.txt** | User instructions |
+
+All files must stay in the same folder.
+
+---
+
+## 🛠️ Troubleshooting
+
+### MP3 download fails  
+`ffmpeg.exe` or `ffprobe.exe` is missing.
+
+### “yt-dlp not found”  
+`yt-dlp.exe` was moved or deleted.
+
+### App doesn’t open  
+Windows SmartScreen may warn about unsigned apps.  
+Click **More info → Run anyway**.
+
+### Downloads are slow  
+Use the built‑in updater to refresh yt‑dlp.
+
+---
+
+## 📜 License
+MIT License
+
+---
+
+## 🙌 Support the Project
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-❤️-red)](https://github.com/sponsors/jjar7266)
+
+<a href="https://buymeacoffee.com/jjar7266" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174">
+</a>
+
+---
+
+## ⭐ Thank You for Using MPX Downloader!
+If you enjoy the app, consider starring the repo.
