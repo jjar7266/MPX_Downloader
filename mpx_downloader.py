@@ -33,6 +33,9 @@ import threading                #  Run downloads in a background thread so GUI s
 import requests
 from tkinter import filedialog
 
+# Create the default folder path ONCE
+
+default_path = os.path.join(os.path.expanduser("~"), "Downloads")
 
 # ---------------------------------------------------------
 # Ensure download folders exist before the GUI loads
@@ -75,6 +78,10 @@ def download_mp3(url, save_path, status_label, root):
     - All GUI updates routed through thread_safe_status().
     """
 
+    # Ensure the save folder exists BEFORE marking download active
+
+    os.makedirs(save_path, exist_ok=True)
+
     # Mark download as in progress
 
     root.is_downloading = True
@@ -87,11 +94,15 @@ def download_mp3(url, save_path, status_label, root):
 
     # yt-dlp command for MP3 extraction
 
+    output_template = os.path.join(save_path, "%(title)s_%(autonumber)s.%(ext)s").replace("\\", "/")
+
     command = [
         yt_dlp_path,
+        "-c",  # resume support
+
         "--no-playlist",
         "-x", "--audio-format", "mp3",
-        "-o", os.path.join(save_path, "%(title)s_%(autonumber)s.%(ext)s"),
+        "-o", output_template,
         url
     ]
 
@@ -130,6 +141,10 @@ def download_mp4(url, save_path, status_label, root):
     - Uses thread-safe UI updates.
     """
 
+    # Ensure the save folder exists BEFORE marking download active
+
+    os.makedirs(save_path, exist_ok=True)
+
     # Mark download as in progress
 
     root.is_downloading = True
@@ -142,11 +157,14 @@ def download_mp4(url, save_path, status_label, root):
 
     # Best available MP4 video + best available M4A audio
 
+    output_template = os.path.join(save_path, "%(title)s_%(autonumber)s.%(ext)s").replace("\\", "/")
+
     command = [
         yt_dlp_path,
+        "-c",  # resume support
         "--no-playlist",
         "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
-        "-o", os.path.join(save_path, "%(title)s_%(autonumber)s.%(ext)s"),
+        "-o", output_template,
         url
     ]
     try:
@@ -211,6 +229,13 @@ def update_ytdlp(status_label, root):
     except Exception as e:  # noqa
         thread_safe_status(root, status_label, "Update failed")
         root.after(0, lambda: messagebox.showerror("Update Error", str(e)))  # noqa
+
+def show_default_folder():
+    messagebox.showinfo(
+        "Default Folder",
+        f"Your default download folder is:\n\n{default_path}"
+    )
+
 # ---------------------------------------------------------
 # Handle Download Button Click
 # ---------------------------------------------------------
@@ -269,8 +294,8 @@ def main():
     # Create the save-path variable FIRST
 
     save_path_var = tk.StringVar()
-    save_path_var.set(os.path.join(os.path.expanduser("~"), "Downloads"))
-
+    save_path_var.set(default_path)
+    
     # Define your browse function
 
     def choose_save_folder():
@@ -291,9 +316,11 @@ def main():
     save_display.pack(side="left", padx=5)
 
     # Browse button
-
     browse_button = tk.Button(save_frame, text="Browse...", command=choose_save_folder)
     browse_button.pack(side="left", padx=5)
+
+    # Default folder button
+    tk.Button(save_frame, text="Default Folder", command=show_default_folder).pack(side="left", padx=5)
 
     # Title label
     title_label = tk.Label(root, text="MPX Downloader", font=("Arial", 16, "bold"))
