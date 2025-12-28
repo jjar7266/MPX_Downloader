@@ -29,6 +29,7 @@ import tkinter as tk            #  GUI framework
 from tkinter import messagebox  #  Popup dialogs 
 import subprocess               #  Run yt-dlp.exe
 import os                       #  Folder creation and file paths
+import sys
 import threading                #  Run downloads in a background thread so GUI stays responsive 
 import requests
 from tkinter import filedialog
@@ -36,6 +37,15 @@ from tkinter import filedialog
 # Create the default folder path ONCE
 
 default_path = os.path.join(os.path.expanduser("~"), "Downloads")
+
+# ---------------------------------------------------------
+# PyInstaller-safe resource loader
+# ---------------------------------------------------------
+def resource_path(filename):
+    """Return absolute path to resource, works for dev and Pyinstaller."""
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, filename)
+    return os.path.join(os.path.dirname(__file__), filename)
 
 # ---------------------------------------------------------
 # Ensure download folders exist before the GUI loads
@@ -90,7 +100,9 @@ def download_mp3(url, save_path, status_label, root):
 
     # Build absolute path to yt-dlp.exe (guaranteed to work regardless of cwd)
 
-    yt_dlp_path = os.path.join(os.path.dirname(__file__), "yt-dlp.exe")
+
+
+    yt_dlp_path = resource_path("yt-dlp.exe")
 
     # yt-dlp command for MP3 extraction
 
@@ -99,7 +111,6 @@ def download_mp3(url, save_path, status_label, root):
     command = [
         yt_dlp_path,
         "-c",  # resume support
-
         "--no-playlist",
         "-x", "--audio-format", "mp3",
         "-o", output_template,
@@ -153,7 +164,7 @@ def download_mp4(url, save_path, status_label, root):
 
     # Build absolute path to yt-dlp.exe
 
-    yt_dlp_path = os.path.join(os.path.dirname(__file__), "yt-dlp.exe")
+    yt_dlp_path = resource_path("yt-dlp.exe")
 
     # Best available MP4 video + best available M4A audio
 
