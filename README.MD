@@ -27,7 +27,7 @@
 **A lightweight, user‑friendly desktop app for downloading YouTube videos as MP3 or MP4.**  
 No Python required — just download, extract, and run.
 
-Built with the same polished style as your previous Sound & Music Converter project, but redesigned for video/audio downloading with a clean GUI.
+Built with a clean Tkinter interface and powered by yt‑dlp for fast, reliable downloads.
 
 ---
 
@@ -50,7 +50,7 @@ Everything is bundled — no installs, no setup, no command line.
 - 📁 **Save‑to folder picker**
 - 🔄 **Auto‑numbered filenames** (no overwrites)
 - ⚙️ **Built‑in yt‑dlp updater**
-- 🧩 **Self‑contained EXE** (FFmpeg + yt‑dlp included)
+- 🧩 **Self‑contained EXE** (yt‑dlp included)
 - 🧠 **Thread‑safe UI updates**
 - 🚫 **Close protection during downloads**
 - 🪟 **Clean, modern Tkinter interface**
@@ -65,8 +65,6 @@ Inside the ZIP:
 
 - `MPX_Downloader.exe`
 - `yt-dlp.exe`
-- `ffmpeg.exe`
-- `ffprobe.exe`
 - `README.txt`
 
 Extract the ZIP → run **MPX_Downloader.exe**.
@@ -80,8 +78,7 @@ No installation required.
 MPX Downloader uses:
 
 - **yt‑dlp.exe** → downloads video/audio  
-- **ffmpeg.exe** → converts to MP3/MP4  
-- **ffprobe.exe** → reads metadata  
+- **FFmpeg** → used internally by yt‑dlp when needed  
 
 The GUI handles everything automatically.
 
@@ -104,56 +101,4 @@ If you want to run from source:
 python -m venv venv
 venv\Scripts\activate  # Windows
 pip install -r requirements.txt
-python main.py
-```
-
----
-
-## 📁 Packaged Build Contents
-
-| File | Purpose |
-|------|---------|
-| **MPX_Downloader.exe** | Main application |
-| **yt-dlp.exe** | Downloads video/audio |
-| **ffmpeg.exe** | Converts media formats |
-| **ffprobe.exe** | Reads metadata |
-| **README.txt** | User instructions |
-
-All files must stay in the same folder.
-
----
-
-## 🛠️ Troubleshooting
-
-### MP3 download fails  
-`ffmpeg.exe` or `ffprobe.exe` is missing.
-
-### “yt-dlp not found”  
-`yt-dlp.exe` was moved or deleted.
-
-### App doesn’t open  
-Windows SmartScreen may warn about unsigned apps.  
-Click **More info → Run anyway**.
-
-### Downloads are slow  
-Use the built‑in updater to refresh yt‑dlp.
-
----
-
-## 📜 License
-MIT License
-
----
-
-## 🙌 Support the Project
-
-[![Sponsor](https://img.shields.io/badge/Sponsor-❤️-red)](https://github.com/sponsors/jjar7266)
-
-<a href="https://buymeacoffee.com/jjar7266" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174">
-</a>
-
----
-
-## ⭐ Thank You for Using MPX Downloader!
-If you enjoy the app, consider starring the repo.
+python mpx_downloaderV2.py
