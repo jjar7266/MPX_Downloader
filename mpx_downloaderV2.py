@@ -285,7 +285,13 @@ def main():
 
     context_menu = tk.Menu(root, tearoff=0)
     context_menu.add_command(label="Paste", command=lambda: url_entry.insert(tk.END, root.clipboard_get()))
-    url_entry.bind("<Button-3>", lambda event: context_menu.tk_popup(event.x_root, event.y_root))
+    url_entry.bind(
+        "<Button-3>",
+        lambda event: (
+            context_menu.tk_popup(event.x_root, event.y_root),
+            context_menu.grab_release()
+        )
+    )
 
     status_label = tk.Label(root, text="Ready", anchor="w")
     status_label.pack(fill="x", padx=10, pady=(5, 0))
