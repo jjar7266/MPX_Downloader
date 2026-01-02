@@ -11,10 +11,21 @@ env/
 Thumbs.db
 Desktop.ini
 
-# PyInstaller build artifacts
-dist/
+# Nuitka build artifacts
 build/
+dist/
+*.build
+*.dist
+*.onefile-build
+*.onefile-dist
+
+# PyInstaller (legacy)
 *.spec
+
+# Executables
+*.exe
 
 # Downloads
 downloads/
+downloads/mp3/
+downloads/mp4/
