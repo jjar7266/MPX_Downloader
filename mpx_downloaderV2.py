@@ -25,6 +25,8 @@ import threading
 import requests
 from tkinter import filedialog
 
+CREATE_NO_WINDOW = 0x08000000
+
 # Create the default folder path ONCE
 default_path = os.path.join(os.path.expanduser("~"), "Downloads")
 
@@ -171,7 +173,8 @@ def update_ytdlp(status_label, root):
     try:
         subprocess.run(
             ["python", "-m", "pip", "install", "--upgrade", "yt-dlp"],
-            check=True
+            check=True,
+            creationflags=CREATE_NO_WINDOW
         )
     except Exception:
         pass
