@@ -82,7 +82,7 @@ def download_mp3(url, save_path, status_label, root):
     # Use Nuitka-friendly path
     local_ytdlp = os.path.join(BASE_DIR, "yt-dlp.exe")
 
-    output_template = os.path.join(save_path, "%(title)s_%(autonumber)s.%(ext)s").replace("\\", "/")
+    output_template = os.path.join(save_path, "%(title)s.%(ext)s").replace("\\", "/")
 
     command = [
         local_ytdlp,
@@ -136,7 +136,7 @@ def download_mp4(url, save_path, status_label, root):
 
     # Output template
 
-    output_template = os.path.join(save_path, "%(title)s_%(autonumber)s.%(ext)s").replace("\\", "/")
+    output_template = os.path.join(save_path, "%(title)s.%(ext)s").replace("\\", "/")
 
     command = [
         local_ytdlp,
