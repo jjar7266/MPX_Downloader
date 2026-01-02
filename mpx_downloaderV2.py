@@ -94,7 +94,13 @@ def download_mp3(url, save_path, status_label, root):
     ]
 
     try:
-        result = subprocess.run(command, capture_output=True, text=True)
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            creationflags=CREATE_NO_WINDOW 
+
+        )
 
         if result.returncode == 0:
             thread_safe_status(root, status_label, "MP3 download complete!")
@@ -148,7 +154,13 @@ def download_mp4(url, save_path, status_label, root):
     ]
 
     try:
-        result = subprocess.run(command, capture_output=True, text=True)
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            creationflags=CREATE_NO_WINDOW
+            
+        )
 
         if result.returncode == 0:
             thread_safe_status(root, status_label, "MP4 download complete!")
