@@ -46,13 +46,12 @@ Everything is bundled — no installs, no setup, no command line.
 
 ## ✨ Features
 
-- 🎵 **MP3 & MP4 download modes**
-- 📁 **Save‑to folder picker**
-- 🔄 **Auto‑numbered filenames** (no overwrites)
-- ⚙️ **Built‑in yt‑dlp updater**
-- 🧩 **Self‑contained EXE** (yt‑dlp included)
-- 🧠 **Thread‑safe UI updates**
-- 🚫 **Close protection during downloads**
+- 🎵 **MP3 & MP4 download modes**  
+- 📁 **Save‑to folder picker**  
+- 🔇 **Silent background downloads** (no black console windows)  
+- 🧠 **Thread‑safe UI updates**  
+- 🚫 **Close protection during downloads**  
+- 🧩 **Self‑contained EXE** (yt‑dlp included)  
 - 🪟 **Clean, modern Tkinter interface**
 
 ---
@@ -63,9 +62,9 @@ Download the latest release ZIP from the **Releases** section.
 
 Inside the ZIP:
 
-- `MPX_Downloader.exe`
-- `yt-dlp.exe`
-- `README.txt`
+- `MPX_Downloader.exe`  
+- `yt-dlp.exe`  
+- `README.txt`  
 
 Extract the ZIP → run **MPX_Downloader.exe**.
 
@@ -84,14 +83,25 @@ The GUI handles everything automatically.
 
 ---
 
+## 🔒 Duplicate Download Behavior
+
+MPX Downloader **does not re-download the same link twice**.
+
+If the output file already exists, yt‑dlp will skip the download.  
+This prevents accidental duplicates and keeps your folders clean.
+
+This behavior is intentional and documented.
+
+---
+
 ## 🧪 Requirements (for developers)
 
 If you want to run from source:
 
-- Python 3.10+
-- `yt-dlp` Python package
-- FFmpeg installed or available in PATH
-- Windows 10 or 11
+- Python 3.10+  
+- `yt-dlp` Python package  
+- FFmpeg installed or available in PATH  
+- Windows 10 or 11  
 
 ---
 
@@ -102,3 +112,54 @@ python -m venv venv
 venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 python mpx_downloaderV2.py
+```
+
+---
+
+## 🏗️ Packaging (Nuitka)
+
+The app is packaged using Nuitka with:
+
+- Tkinter plugin enabled  
+- yt‑dlp.exe bundled  
+- Console disabled  
+- Custom icon included  
+
+**Packaging command:**
+
+```bash
+python -m nuitka --onefile --windows-disable-console --windows-icon-from-ico=app.ico --enable-plugin=tk-inter --include-data-file=yt-dlp.exe=yt-dlp.exe mpx_downloaderV2.py
+```
+
+---
+
+## 📁 Folder Layout
+
+```
+MPX_Downloader/
+│
+├── mpx_downloaderV2.py
+├── yt-dlp.exe
+├── app.ico
+│
+├── dist/        (created during packaging)
+├── build/       (created during packaging)
+│
+├── mp3/         (created at runtime)
+└── mp4/         (created at runtime)
+```
+
+---
+
+## 📝 Notes
+
+- Duplicate downloads are intentionally skipped  
+- Multi-threaded downloads keep the UI responsive  
+- All downloads run silently without console windows  
+- No Python installation required for the packaged EXE  
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
