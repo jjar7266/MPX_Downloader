@@ -415,6 +415,37 @@ def download_mp4(url, save_path, status_label, root):
     finally:
         root.is_downloading = False
 
+
+def download_initial_ytdlp(status_label=None, root=None):
+    """
+    Download yt-dlp.exe on first run if it is missing.
+    This is a simplified version of your manual update logic.
+    """
+    url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+
+    try:
+        if status_label and root:
+            thread_safe_status(root, status_label, "Downloading yt-dlp (first run)...", delay=999999)
+
+        with requests.get(url, stream=True, timeout=60) as r:
+            r.raise_for_status()
+            with open(LOCAL_YTDLP, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+
+        logging.info("Initial yt-dlp.exe downloaded successfully.")
+
+        if status_label and root:
+            thread_safe_status(root, status_label, "yt-dlp ready!")
+
+    except Exception as exc:
+        logging.exception("Failed to download initial yt-dlp.exe")
+        if root:
+            root.after(0, lambda: messagebox.showerror("Error", f"Failed to download yt-dlp.exe:\n{exc}"))    # noqa
+        raise
+
+
 # -------------------------
 # UI wiring
 # -------------------------
@@ -434,11 +465,21 @@ def handle_download(mode_var, url_entry, status_label, root, save_path):
     else:
         threading.Thread(target=download_mp4, args=(url, save_path, status_label, root), daemon=True).start()
 
+
 # -------------------------
 # Main application
 # -------------------------
 def main():
     ensure_folders()
+
+    # First-run bootstrap: ensure yt-dlp.exe exists
+    if not os.path.exists(LOCAL_YTDLP):
+        temp_root = tk.Tk()
+        temp_root.withdraw()
+        temp_label = tk.Label(temp_root)
+        download_initial_ytdlp(temp_label, temp_root)
+        temp_root.destroy()
+
 
     root = tk.Tk()
     root.title("MPX Downloader")
