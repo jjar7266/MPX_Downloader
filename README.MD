@@ -29,7 +29,7 @@
 **A lightweight, user‑friendly desktop app for downloading YouTube videos as MP3 or MP4.**  
 No Python required — just download, extract, and run.
 
-Built with a clean Tkinter interface, powered by yt‑dlp for fast, reliable downloads, and now featuring a **full production‑grade updater system**.
+Built with a clean Tkinter interface, powered by yt‑dlp for fast, reliable downloads, and now featuring a **full production‑grade updater system** and a **standalone Nuitka distribution**.
 
 ---
 
@@ -50,16 +50,15 @@ Everything is bundled — no installs, no setup, no command line.
 
 - 🎵 **MP3 & MP4 download modes**  
 - 📁 **Save‑to folder picker**  
-- 🔇 **Silent background downloads** (no console windows)  
+- 🔇 **Silent background downloads**  
 - 🧠 **Thread‑safe UI updates**  
 - 🚫 **Close protection during downloads**  
-- 🧩 **Self‑contained EXE** (yt‑dlp included)  
+- 🧩 **Self‑contained folder distribution** (EXE + runtime + yt‑dlp)  
 - 🪟 **Clean, modern Tkinter interface**  
 - 🔄 **Robust updater system**  
-- ⚡ **PowerShell replace helper** for locked‑file scenarios  
-- 🔔 **Auto‑update checks** (startup + periodic)  
+- 🔔 **Auto‑update checks**  
 - 🛠️ **Manual update button**  
-- 📝 **Logging system** (`log.txt`)  
+- 📝 **Logging system (`log.txt`)**  
 - 📦 **Automatic first‑run bootstrap** (downloads yt‑dlp.exe if missing)  
 
 ---
@@ -67,46 +66,43 @@ Everything is bundled — no installs, no setup, no command line.
 ## 🆕 What's New in v3.0
 
 ### 🔄 Full Robust Updater System
-The new updater is engineered for reliability and safety:
+A two‑stage update process ensures yt‑dlp stays current:
 
-#### Self‑Update Stage
+#### Stage 1 — Self‑Update
 - Runs `yt-dlp.exe --update` silently  
 - Logs stdout/stderr  
 - If successful → done  
-- If not → falls back to manual update  
 
-#### Manual Update Stage
+#### Stage 2 — Manual Update Fallback
 - Downloads latest yt‑dlp.exe to `yt-dlp.exe.new`  
-- Creates `.bak` backup of current yt‑dlp.exe  
-- Attempts atomic replace using `os.replace()`  
-- If locked → launches a **detached PowerShell helper** that:  
-  - Waits for the EXE to unlock  
-  - Moves `.new` → `yt-dlp.exe`  
-  - Removes `.bak`  
-  - Optionally restarts the app  
-  - Deletes itself  
+- Creates `.bak` backup  
+- Attempts atomic replace  
+- If locked → launches a detached PowerShell helper that:  
+  - Waits for unlock  
+  - Replaces the file  
+  - Cleans up `.bak` and `.new`  
 
 #### Pending Update Handling
 - On startup, the app checks for `yt-dlp.exe.new`  
-- Attempts atomic replace  
-- If locked → defers to next launch  
+- Applies it automatically if possible  
+- Defers if locked  
 
 ### 🔔 Auto‑Update Checks
-- One‑time startup check  
-- 24‑hour periodic background checks  
+- Startup check  
+- Periodic background checks  
 - Fully threaded, non‑blocking  
 
 ### 📦 Packaging Improvements
-- Nuitka onefile/onefolder compatible  
-- Tkinter plugin enabled  
-- Silent execution (no console window)  
-- Bundled yt‑dlp.exe  
+- Switched to **Nuitka standalone (onefolder)**  
+- All required DLLs, Python runtime, Tkinter, SSL, and extension modules included  
+- `yt-dlp.exe` shipped externally and fully updatable  
+- `BASE_DIR` logic fixed for standalone builds  
 
 ### 🛠 Other Improvements
 - Logging system (`log.txt`)  
-- Runtime folder creation  
 - Thread‑safe status updates  
 - First‑run bootstrap downloader  
+- Cleaner path resolution and error handling  
 
 ---
 
@@ -114,15 +110,38 @@ The new updater is engineered for reliability and safety:
 
 Download the latest release ZIP from the **[Releases](https://github.com/jjar7266/mpx-downloader/releases)** page.
 
-Inside the ZIP:
+Extract the ZIP → open the folder → run **MPX_Downloader.exe**.
 
-- `MPX_Downloader.exe`  
-- `yt-dlp.exe`  
-- `README.txt`  
+```
+⚠️ IMPORTANT:
+Do NOT move the EXE out of the folder.
+The entire folder is the application.
+```
 
-Extract the ZIP → run **MPX_Downloader.exe**.
+---
 
-No installation required.
+## 📁 Distribution Folder Layout
+
+```
+MPX_Downloader/
+│
+├── MPX_Downloader.exe        (main application)
+├── yt-dlp.exe                (download engine, auto-updated)
+├── python313.dll             (embedded Python runtime)
+├── _tkinter.pyd              (Tkinter GUI engine)
+├── libssl-3.dll              (SSL support)
+├── libcrypto-3.dll           (crypto backend)
+├── vcruntime140.dll          (MSVC runtime)
+├── vcruntime140_1.dll
+├── zlib1.dll
+│
+├── certifi/                  (certificate bundle)
+├── charset_normalizer/       (HTTP parsing)
+├── tcl/                      (Tkinter dependency)
+└── tk/                       (Tkinter dependency)
+```
+
+This is the exact structure included in the release ZIP.
 
 ---
 
@@ -145,8 +164,6 @@ MPX Downloader **does not re-download the same link twice**.
 
 If the output file already exists, yt‑dlp will skip the download.  
 This prevents accidental duplicates and keeps your folders clean.
-
-This behavior is intentional.
 
 ---
 
@@ -174,9 +191,7 @@ python mpx_downloaderV3.py
 
 ## 🏗️ Packaging (Nuitka)
 
-Recommended: **onefolder** mode for clarity.
-
-**Packaging command:**
+Recommended: **standalone onefolder** mode.
 
 ```bash
 python -m nuitka ^
@@ -186,28 +201,6 @@ python -m nuitka ^
   --enable-plugin=tk-inter ^
   --include-data-file=yt-dlp.exe=yt-dlp.exe ^
   mpx_downloaderV3.py
-```
-
----
-
-## 📁 Folder Layout
-
-```
-MPX_Downloader/
-│
-├── mpx_downloaderV3.py
-├── yt-dlp.exe
-├── yt-dlp.exe.new        (pending update, if present)
-├── yt-dlp.exe.bak        (backup during update)
-├── log.txt               (runtime log)
-├── app.ico
-│
-├── downloads/
-│   ├── mp3/
-│   └── mp4/
-│
-├── dist/                 (Nuitka EXE output)
-└── build/                (Nuitka build artifacts)
 ```
 
 ---
