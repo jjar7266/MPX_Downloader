@@ -48,16 +48,26 @@ BACKUP_SUFFIX = ".bak"
 # -------------------------
 def get_base_dir():
     """
-    Teacher: Determine the folder where the app should look for yt-dlp.exe.
-
-    - When frozen (PyInstaller/Nuitka), sys.executable points to the running EXE.
-    - When running as a script, __file__ points to the script file.
+    Robust base directory resolver for Nuitka.
+    Ensures the app always uses the folder where the EXE actually lives,
+    even when launched from Desktop, Downloads, or via shortcuts.
     """
-    if getattr(sys, "frozen", False):
-        return os.path.dirname(sys.executable)
-    return os.path.dirname(__file__)
+    try:
+        if getattr(sys, "frozen", False):
+            # Absolute path prevents Windows from falling back to System32
+            return os.path.abspath(os.path.dirname(sys.executable))
+        return os.path.abspath(os.path.dirname(__file__))
+    except Exception:
+        # Last‑resort fallback (rare)
+        return os.getcwd()
 
+    
 BASE_DIR = get_base_dir()
+
+# Safety check: ensure BASE_DIR is valid and writable
+if not os.path.isdir(BASE_DIR):
+    BASE_DIR = os.path.abspath(os.path.dirname(sys.executable))
+
 LOCAL_YTDLP = os.path.join(BASE_DIR, "yt-dlp.exe")
 TEMP_REPLACE = os.path.join(BASE_DIR, "yt-dlp.exe.new")
 LOG_PATH = os.path.join(BASE_DIR, "log.txt")
@@ -470,15 +480,18 @@ def handle_download(mode_var, url_entry, status_label, root, save_path):
 # Main application
 # -------------------------
 def main():
+    # Ensure runtime folders exist
     ensure_folders()
 
     # First-run bootstrap: ensure yt-dlp.exe exists
     if not os.path.exists(LOCAL_YTDLP):
-        temp_root = tk.Tk()
-        temp_root.withdraw()
-        temp_label = tk.Label(temp_root)
-        download_initial_ytdlp(temp_label, temp_root)
-        temp_root.destroy()
+        try:
+            temp_root = tk.Tk()
+            temp_root.withdraw()
+            temp_label = tk.Label(temp_root)
+            download_initial_ytdlp(temp_label, temp_root)
+        finally:
+            temp_root.destroy()
 
 
     root = tk.Tk()
