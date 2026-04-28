@@ -439,7 +439,7 @@ def download_initial_ytdlp(status_label=None, root=None):
         if status_label and root:
             thread_safe_status(root, status_label, "yt-dlp ready!")
 
-    except Exception as exc:
+    except Exception as exc:    # noqa
         logging.exception("Failed to download initial yt-dlp.exe")
         if root:
             root.after(0, lambda: messagebox.showerror("Error", f"Failed to download yt-dlp.exe:\n{exc}"))    # noqa
