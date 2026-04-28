@@ -176,39 +176,85 @@ def download_mp4(url, save_path, status_label, root):
         root.is_downloading = False
 
 # ---------------------------------------------------------
-# Update yt-dlp.exe
+# Improved yt-dlp Updater (Teacher/Student Mode)
 # ---------------------------------------------------------
 def update_ytdlp(status_label, root):
-    thread_safe_status(root, status_label, "Updating yt-dlp...", delay=999999)
+    """
+    Updates yt-dlp.exe using a two-step strategy:
+    1. Try yt-dlp's built-in self-updater (best method).
+    2. If that fails, fall back to downloading the latest EXE manually.
 
-    # Step 1: Update pip package (optional)
+    This approach avoids file-locking issues and works reliably
+    inside packaged EXE environments (Nuitka/PyInstaller).
+    """
+
+    # Helper: update status safely from a thread
+    def update_status(msg):
+        thread_safe_status(root, status_label, msg, delay=999999)
+
+    update_status("Updating yt-dlp...")
+
+    # Path to the bundled yt-dlp.exe
+    local_ytdlp = os.path.join(BASE_DIR, "yt-dlp.exe")
+
+    # -----------------------------------------------------
+    # STEP 1 — Try yt-dlp's built-in updater
+    # -----------------------------------------------------
+    update_status("Running yt-dlp self-update...")
+
     try:
-        subprocess.run(
-            ["python", "-m", "pip", "install", "--upgrade", "yt-dlp"],
-            check=True,
+        result = subprocess.run(
+            [local_ytdlp, "--update"],
+            capture_output=True,
+            text=True,
             creationflags=CREATE_NO_WINDOW
         )
+
+        # If yt-dlp updated itself successfully
+        if result.returncode == 0:
+            update_status("yt-dlp updated successfully!")
+            return
+
     except Exception:
+        # Ignore errors here — we'll fall back to manual update
         pass
 
-    # Step 2: Download latest yt-dlp.exe
+    # -----------------------------------------------------
+    # STEP 2 — Manual download fallback
+    # -----------------------------------------------------
+    update_status("Downloading latest yt-dlp.exe...")
+
     download_url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
-    exe_path = os.path.join(BASE_DIR, "yt-dlp.exe")  # FIXED for Nuitka
 
     try:
-        thread_safe_status(root, status_label, "Downloading latest yt-dlp.exe...", delay=999999)
-
         response = requests.get(download_url, timeout=30)
         response.raise_for_status()
 
-        with open(exe_path, "wb") as f:
-            f.write(response.content)
+        # Attempt to overwrite the existing file
+        try:
+            with open(local_ytdlp, "wb") as f:
+                f.write(response.content)
 
-        thread_safe_status(root, status_label, "yt-dlp updated successfully!")
+            update_status("yt-dlp updated successfully!")
+            return
 
-    except Exception as e:  # noqa
-        thread_safe_status(root, status_label, "Update failed")
-        root.after(0, lambda: messagebox.showerror("Update Error", str(e)))  # noqa
+        except PermissionError:
+            # File is locked — cannot overwrite
+            update_status("Update downloaded, but file is locked.")
+            root.after(
+                0,
+                lambda: messagebox.showwarning(
+                    "Restart Required",
+                    "yt-dlp.exe is currently in use and cannot be updated.\n\n"
+                    "Please close MPX Downloader and run the update again."
+                )
+            )
+            return
+
+    except Exception as e: # noqa
+        update_status("Update failed")
+        root.after(0, lambda: messagebox.showerror("Update Error", str(e))) # noqa
+
 
 # ---------------------------------------------------------
 # Default folder popup
