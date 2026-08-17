@@ -4,10 +4,10 @@
   <img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174">
 </a>
 
-<h1 align="center">🎵📥 MPX Downloader 📥🎵</h1>
+<h1 align="center">🎵📥 MPX Downloader v4.0 📥🎵</h1>
 <p align="center">
-  <i>A clean, modern YouTube MP3/MP4 downloader powered by yt‑dlp & FFmpeg</i><br>
-  <b>Simple • Reliable • Self‑Updating • Polished</b>
+  <i>A clean, modern YouTube MP3/MP4 downloader powered by yt‑dlp, FFmpeg, and a fully‑integrated runtime detection system.</i><br>
+  <b>Simple • Reliable • Self‑Updating • Region‑Aware • Polished</b>
 </p>
 
 ---
@@ -17,96 +17,95 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
   </a>
   <a href="https://www.python.org/">
-    <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python" alt="Python">
+    <img src="https://img.shields.io/badge/Python-3.13+-blue?logo=python" alt="Python">
   </a>
   <a href="https://github.com/jjar7266/mpx-downloader/releases">
-    <img src="https://img.shields.io/badge/Release-v3.0-brightgreen" alt="v3.0">
+    <img src="https://img.shields.io/badge/Release-v4.0-brightgreen" alt="v4.0">
   </a>
 </p>
 
 # 🎶 MPX Downloader
 
-**A lightweight, user‑friendly desktop app for downloading YouTube videos as MP3 or MP4.**  
-No Python required — just download, extract, and run.
+**MPX Downloader** is a lightweight, user‑friendly desktop app for downloading YouTube videos as MP3 or MP4 — no Python installation required.
+Just download, extract, and run.
 
-Built with a clean Tkinter interface, powered by yt‑dlp for fast, reliable downloads, and now featuring a **full production‑grade updater system** and a **standalone Nuitka distribution**.
-
----
-
-## 🚀 Overview
-
-**MPX Downloader** wraps yt‑dlp and FFmpeg in a simple, intuitive interface:
-
-- Paste a YouTube link  
-- Choose MP3 or MP4  
-- Pick a save folder  
-- Download instantly  
-
-Everything is bundled — no installs, no setup, no command line.
+Built with a clean Tkinter interface, powered by yt‑dlp for fast, reliable downloads, and packaged via **Nuitka standalone** for maximum portability.
 
 ---
 
-## ✨ Features
+# 🚀 Overview
 
-- 🎵 **MP3 & MP4 download modes**  
-- 📁 **Save‑to folder picker**  
-- 🔇 **Silent background downloads**  
-- 🧠 **Thread‑safe UI updates**  
-- 🚫 **Close protection during downloads**  
-- 🧩 **Self‑contained folder distribution** (EXE + runtime + yt‑dlp)  
-- 🪟 **Clean, modern Tkinter interface**  
-- 🔄 **Robust updater system**  
-- 🔔 **Auto‑update checks**  
-- 🛠️ **Manual update button**  
-- 📝 **Logging system (`log.txt`)**  
-- 📦 **Automatic first‑run bootstrap** (downloads yt‑dlp.exe if missing)  
+MPX Downloader wraps yt‑dlp and FFmpeg in a simple, intuitive interface:
+
+- Paste a YouTube link
+- Choose MP3 or MP4
+- Pick a save folder
+- Download instantly
+
+Everything is bundled — no installs, no command line, no configuration.
 
 ---
 
-## 🆕 What's New in v3.0
+# ✨ Features
 
-### 🔄 Full Robust Updater System
-A two‑stage update process ensures yt‑dlp stays current:
+- 🎵 **MP3 & MP4 download modes**
+- 📁 **Save‑to folder picker**
+- 🔇 **Silent background downloads**
+- 🧠 **Thread‑safe UI updates**
+- 🚫 **Close protection during downloads**
+- 🧩 **Self‑contained folder distribution**
+- 🪟 **Clean, modern Tkinter interface**
+- 🔄 **Robust yt‑dlp updater system**
+- 🔔 **Auto‑update checks at startup**
+- 📝 **Logging system (`log.txt`)**
+- 📦 **Automatic first‑run bootstrap**
+- 🧭 **Region‑lock awareness (403 detection)**
+- 🧪 **Node.js runtime detection**
+- 🔐 **Optional cookies.txt support for restricted videos**
 
-#### Stage 1 — Self‑Update
-- Runs `yt-dlp.exe --update` silently  
-- Logs stdout/stderr  
-- If successful → done  
+---
 
-#### Stage 2 — Manual Update Fallback
-- Downloads latest yt‑dlp.exe to `yt-dlp.exe.new`  
-- Creates `.bak` backup  
-- Attempts atomic replace  
-- If locked → launches a detached PowerShell helper that:  
-  - Waits for unlock  
-  - Replaces the file  
-  - Cleans up `.bak` and `.new`  
+# 🆕 What’s New in v4.0
 
-#### Pending Update Handling
-- On startup, the app checks for `yt-dlp.exe.new`  
-- Applies it automatically if possible  
-- Defers if locked  
+### 🧠 Node.js Runtime Detection
+yt‑dlp uses JavaScript runtimes (like Node.js) to decrypt certain YouTube signatures.
+Without Node.js, some videos fail with 403 errors.
 
-### 🔔 Auto‑Update Checks
-- Startup check  
-- Periodic background checks  
-- Fully threaded, non‑blocking  
+MPX Downloader v4.0 now:
+
+- Detects Node.js at startup
+- Logs detection status
+- Automatically enables JS‑runtime compatibility mode
+- Improves reliability for signature‑cipher videos
+
+### 🌍 Region‑Lock Awareness
+Some videos are blocked in certain countries or VPN locations.
+MPX Downloader v4.0 now:
+
+- Detects 403 errors caused by region locks
+- Logs region‑related failures
+- Suggests fixes (cookies, VPN change, Node.js)
+
+### 🔄 Improved Updater System
+The v4.0 updater is cleaner, safer, and more predictable:
+
+- Startup self‑update check
+- Manual update button
+- Atomic `.new` + `.bak` replacement
+- PowerShell helper for locked file replacement
+- Automatic bootstrap if `yt-dlp.exe` is missing
+- Clear logging of update results
 
 ### 📦 Packaging Improvements
-- Switched to **Nuitka standalone (onefolder)**  
-- All required DLLs, Python runtime, Tkinter, SSL, and extension modules included  
-- `yt-dlp.exe` shipped externally and fully updatable  
-- `BASE_DIR` logic fixed for standalone builds  
-
-### 🛠 Other Improvements
-- Logging system (`log.txt`)  
-- Thread‑safe status updates  
-- First‑run bootstrap downloader  
-- Cleaner path resolution and error handling  
+- Updated to **Python 3.13 Nuitka standalone**
+- Cleaner folder layout
+- More reliable path resolution
+- Faster startup
+- Smaller footprint
 
 ---
 
-## 📦 Download (Windows)
+# 📦 Download (Windows)
 
 Download the latest release ZIP from the **[Releases](https://github.com/jjar7266/mpx-downloader/releases)** page.
 
@@ -120,7 +119,7 @@ The entire folder is the application.
 
 ---
 
-## 📁 Distribution Folder Layout
+# 📁 Distribution Folder Layout (v4.0)
 
 ```
 MPX_Downloader/
@@ -141,55 +140,53 @@ MPX_Downloader/
 └── tk/                       (Tkinter dependency)
 ```
 
-This is the exact structure included in the release ZIP.
-
 ---
 
-## 🖥️ How It Works
+# 🖥️ How It Works
 
 MPX Downloader uses:
 
-- **yt‑dlp.exe** → downloads video/audio  
-- **FFmpeg** → used internally by yt‑dlp  
-- **Updater system** → keeps yt‑dlp current  
-- **Threaded workers** → keep UI responsive  
+- **yt‑dlp.exe** → downloads video/audio
+- **FFmpeg** → used internally by yt‑dlp
+- **Node.js (optional)** → decrypts signature‑cipher videos
+- **Updater system** → keeps yt‑dlp current
+- **Threaded workers** → keep UI responsive
 
 The GUI handles everything automatically.
 
 ---
 
-## 🔒 Duplicate Download Behavior
+# 🔒 Duplicate Download Behavior
 
 MPX Downloader **does not re-download the same link twice**.
 
-If the output file already exists, yt‑dlp will skip the download.  
-This prevents accidental duplicates and keeps your folders clean.
+If the output file already exists, yt‑dlp will skip the download.
 
 ---
 
-## 🧪 Requirements (for developers)
+# 🧪 Requirements (for developers)
 
 If running from source:
 
-- Python 3.10+  
-- `yt-dlp` Python package  
-- FFmpeg installed or available in PATH  
-- Windows 10 or 11  
+- Python 3.13+
+- `yt-dlp` Python package
+- FFmpeg installed or available in PATH
+- Windows 10 or 11
 
 ---
 
-## ⚙️ Setup (for developers)
+# ⚙️ Setup (for developers)
 
 ```bash
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-python mpx_downloaderV3.py
+python mpx_downloaderV4.py
 ```
 
 ---
 
-## 🏗️ Packaging (Nuitka)
+# 🏗️ Packaging (Nuitka)
 
 Recommended: **standalone onefolder** mode.
 
@@ -200,34 +197,35 @@ python -m nuitka ^
   --windows-icon-from-ico=app.ico ^
   --enable-plugin=tk-inter ^
   --include-data-file=yt-dlp.exe=yt-dlp.exe ^
-  mpx_downloaderV3.py
+  mpx_downloaderV4.py
 ```
 
 ---
 
-## 📝 Notes
+# 📝 Notes
 
-- Duplicate downloads are intentionally skipped  
-- All downloads run silently  
-- UI stays responsive during downloads  
-- No Python installation required for packaged EXE  
-- Updater uses `.new` + `.bak` for safety  
-- PowerShell helper ensures updates apply even when locked  
-- `BASE_DIR` and paths logged to `log.txt`  
-
----
-
-## 👤 Author
-
-**José "Joe" Ruiz**  
-📍 Coral Springs, FL  
-
-- 🐙 GitHub: [@jjar7266](https://github.com/jjar7266)  
-- ❤️ Sponsor: [github.com/sponsors/jjar7266](https://github.com/sponsors/jjar7266)  
-- ☕ Buy Me a Coffee: [buymeacoffee.com/jjar7266](https://buymeacoffee.com/jjar7266)  
+- Node.js improves reliability for certain videos
+- Region‑locked videos may require cookies or VPN adjustments
+- Duplicate downloads are skipped
+- All downloads run silently
+- UI stays responsive
+- Updater uses `.new` + `.bak` for safety
+- PowerShell helper ensures updates apply even when locked
+- `BASE_DIR` and paths logged to `log.txt`
 
 ---
 
-## 📄 License
+# 👤 Author
+
+**José "Joe" Ruiz**
+📍 Coral Springs, FL
+
+- 🐙 GitHub: [@jjar7266](https://github.com/jjar7266)
+- ❤️ Sponsor: [github.com/sponsors/jjar7266](https://github.com/sponsors/jjar7266)
+- ☕ Buy Me a Coffee: [buymeacoffee.com/jjar7266](https://buymeacoffee.com/jjar7266)
+
+---
+
+# 📄 License
 
 This project is licensed under the **MIT License**.
