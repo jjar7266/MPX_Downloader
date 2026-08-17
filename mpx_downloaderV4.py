@@ -556,7 +556,6 @@ def main():
 
 
     root = tk.Tk()
-    root.iconbitmap("app.ico")
     root.title("MPX Downloader")
     root.geometry("520x300")
     root.resizable(False, False)
