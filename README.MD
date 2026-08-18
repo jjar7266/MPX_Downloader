@@ -240,4 +240,4 @@ The next incremental update (v4.01) will focus on UI polish and user‑experienc
 - Small “About” window with version + runtime info
 
 For the full roadmap of planned updates (v4.01 → v5.0), see:
-👉 https://github.com/jjar7266/mpx-downloader/blob/main/TODO.md
+👉 https://github.com/jjar7266/MPX_Downloader/blob/main/TODO.md
