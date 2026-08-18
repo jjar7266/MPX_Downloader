@@ -229,3 +229,15 @@ python -m nuitka ^
 # 📄 License
 
 This project is licensed under the **MIT License**.
+
+## 🚀 Upcoming Improvements — v4.01
+The next incremental update (v4.01) will focus on UI polish and user‑experience upgrades:
+
+- Dark Mode / Light Mode toggle
+- Drag‑and‑drop support for YouTube links
+- Friendlier error popups and clearer status messages
+- “Open Download Folder” button after downloads
+- Small “About” window with version + runtime info
+
+For the full roadmap of planned updates (v4.01 → v5.0), see:
+👉 https://github.com/jjar7266/mpx-downloader/blob/main/TODO.md
